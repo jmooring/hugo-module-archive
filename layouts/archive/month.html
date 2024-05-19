@@ -1,0 +1,41 @@
+{{- define "main" }}
+  <h1>{{ .Title }}</h1>
+
+  {{- $cfg := site.Params.modules.archive }}
+
+  {{- if $cfg.navigation }}
+    <nav class="previous-next archive-previous-next">
+      <ul>
+        {{- $months := (where (where site.Pages "Type" "archive") "Layout" "month").ByDate.Reverse }}
+        {{- with $months.Next . }}
+          <li><a href="{{ .RelPermalink }}">&laquo;&nbsp;{{ .Date | time.Format $cfg.formats.month }}</a></li>
+        {{- end }}
+        {{- with $months.Prev . }}
+          <li><a href="{{ .RelPermalink }}">{{ .Date | time.Format $cfg.formats.month }}&nbsp;&raquo;</a></li>
+        {{- end }}
+      </ul>
+    </nav>
+  {{- end }}
+
+  {{- $p := slice }}
+  {{- $section := strings.Trim (site.Params.modules.archive.section) "/" }}
+  {{- range where site.RegularPages "Section" $section }}
+    {{- if eq ($.Date.Format "2006-01") (.PublishDate.Format "2006-01") }}
+      {{- $p = $p | append . }}
+    {{- end }}
+  {{- end }}
+
+  {{- if $cfg.paginate }}
+    {{- $p = (.Paginate $p).Pages }}
+  {{- end }}
+
+  {{- range $p }}
+    {{- partial "archive/list-item.html" . }}
+  {{- end }}
+
+  {{- if $cfg.paginate }}
+    <nav class="pagination archive-pagination">
+      {{- template "_internal/pagination.html" . }}
+    </nav>
+  {{- end }}
+{{- end }}

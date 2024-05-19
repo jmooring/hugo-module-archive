@@ -1,0 +1,50 @@
+{{- with resources.Get "data/published-content.csv" }}
+
+  {{- /* Get module configuration. */}}
+  {{- $cfg := site.Params.modules.archive }}
+  {{- $cfg = merge $cfg (dict "section" (strings.Trim $cfg.section "/")) }}
+  {{- $cfg = merge $cfg (dict "prefix" (or (strings.Trim $cfg.prefix "/") "")) }}
+
+  {{- /* Render. */}}
+  {{- with where site.RegularPages "Section" $cfg.section }}
+    <div class="archive-outline">
+      <ol>
+        {{- range .GroupByPublishDate $cfg.formats.year }}
+          {{- $href := "" }}
+          {{- with index .Pages 0 }}
+            {{- $href = printf "%s/%04d" $cfg.prefix .PublishDate.Year }}
+          {{- end }}
+          <li>
+            <a href="{{ $href }}">{{ .Key }}</a>
+            <ol>
+              {{- range .GroupByPublishDate $cfg.formats.month }}
+                {{- with index .Pages 0 }}
+                  {{- $href = printf "%s/%04d/%02d" $cfg.prefix .PublishDate.Year .PublishDate.Month }}
+                {{- end }}
+                <li>
+                  <a href="{{ $href }}">{{ .Key }}</a>
+                  <ol>
+                    {{- range .GroupByPublishDate $cfg.formats.day }}
+                      {{- with index .Pages 0 }}
+                        {{- $href = printf "%s/%04d/%02d/%02d" $cfg.prefix .PublishDate.Year .PublishDate.Month .PublishDate.Day }}
+                      {{- end }}
+                      <li>
+                        <a href="{{ $href }}">{{ .Key }}</a>
+                        <ol>
+                          {{- range .Pages.ByPublishDate.Reverse }}
+                            <li><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>
+                          {{- end }}
+                        </ol>
+                      </li>
+                    {{- end }}
+                  </ol>
+                </li>
+              {{- end }}
+            </ol>
+          </li>
+        {{- end }}
+      </ol>
+    </div>
+  {{- end }}
+
+{{- end }}

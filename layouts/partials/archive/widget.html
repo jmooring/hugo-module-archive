@@ -1,0 +1,28 @@
+{{- with resources.Get "data/published-content.csv" }}
+
+  {{- /* Get module configuration. */}}
+  {{- $cfg := site.Params.modules.archive }}
+  {{- $cfg = merge $cfg (dict "section" (strings.Trim $cfg.section "/")) }}
+  {{- $cfg = merge $cfg (dict "prefix" (or (strings.Trim $cfg.prefix "/") "")) }}
+
+  {{- /* Render. */}}
+  {{- with (where (where site.Pages "Type" "archive") "Layout" "year").ByPublishDate.Reverse }}
+    <table class="archive-widget">
+      {{- range . }}
+        <tr>
+          {{- $year := .PublishDate.Year }}
+          <th class="enabled" scope="row"><a href="{{ .RelPermalink }}">{{ $year }}</a></th>
+          {{- range $i := seq 12 }}
+            {{- $month := time.AsTime (printf "2000-%02d-01" $i) | time.Format "Jan" }}
+            {{- with site.GetPage (printf "%s/%04d/%02d" $cfg.prefix $year $i ) }}
+              <td class="enabled"><a href="{{ .RelPermalink }}">{{ $month }}</a></td>
+            {{- else }}
+              <td class="disabled">{{ $month }}</td>
+            {{- end }}
+          {{- end }}
+        </tr>
+      {{- end }}
+    </table>
+  {{- end }}
+
+{{- end }}

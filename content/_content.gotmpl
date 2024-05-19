@@ -1,0 +1,62 @@
+{{/* Get module configuration. */}}
+{{ $cfg := site.Params.modules.archive }}
+{{ $cfg = merge $cfg (dict "section" (strings.Trim $cfg.section "/")) }}
+{{ $cfg = merge $cfg (dict "prefix" (or (strings.Trim $cfg.prefix "/") "")) }}
+
+{{/* Get map of pages. */}}
+{{ $data := partial "archive/csv-to-map.html" (dict "path" "data/published-content.csv") }}
+{{ $pages := where (where $data "section" $cfg.section) "kind" "page" }}
+
+{{/* Create slices of page dates. */}}
+{{ $yearDates := slice }}
+{{ $yearMonthDates := slice }}
+{{ $yearMonthDayDates := slice }}
+{{ range $pages }}
+  {{ with .publishDate | time.AsTime }}
+    {{ $yearDates = $yearDates | append (printf "%04d-01-01" .Year | time.AsTime) }}
+    {{ $yearMonthDates = $yearMonthDates | append (printf "%04d-%02d-01" .Year .Month | time.AsTime) }}
+    {{ $yearMonthDayDates = $yearMonthDayDates | append (printf "%04d-%02d-%02d" .Year .Month .Day | time.AsTime) }}
+  {{ end }}
+{{ end }}
+{{ $yearDates = $yearDates | uniq }}
+{{ $yearMonthDates = $yearMonthDates | uniq }}
+{{ $yearMonthDayDates = $yearMonthDayDates | uniq }}
+
+{{/* Create archive pages: year. */}}
+{{ range $yearDates }}
+  {{ $page := dict
+    "dates" (dict "date" .)
+    "kind" "section"
+    "layout" "year"
+    "path" (printf "%s/%s" $cfg.prefix (.Format "2006") | strings.TrimLeft "/")
+    "title" (printf "%s %s" (T "archive_title_year") (. | time.Format $cfg.formats.year))
+    "type" "archive"
+  }}
+  {{ $.AddPage $page }}
+{{ end }}
+
+{{/* Create archive pages: year/month. */}}
+{{ range $yearMonthDates }}
+  {{ $page := dict
+    "dates" (dict "date" .)
+    "kind" "section"
+    "layout" "month"
+    "path" (printf "%s/%s" $cfg.prefix (.Format "2006/01") | strings.TrimLeft "/")
+    "title" (printf "%s %s" (T "archive_title_month") (. | time.Format $cfg.formats.month))
+    "type" "archive"
+  }}
+  {{ $.AddPage $page }}
+{{ end }}
+
+{{/* Create archive pages: year/month/day. */}}
+{{ range $yearMonthDayDates }}
+  {{ $page := dict
+    "dates" (dict "date" .)
+    "kind" "section"
+    "layout" "day"
+    "path" (printf "%s/%s" $cfg.prefix (.Format "2006/01/02") | strings.TrimLeft "/")
+    "title" (printf "%s %s" (T "archive_title_day") (. | time.Format $cfg.formats.day))
+    "type" "archive"
+  }}
+  {{ $.AddPage $page }}
+{{ end }}

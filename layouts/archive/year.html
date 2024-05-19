@@ -1,0 +1,42 @@
+{{- define "main" }}
+  <h1>{{- .Title }}</h1>
+
+  {{- $p := slice }}
+  {{- $section := strings.Trim (site.Params.modules.archive.section) "/" }}
+  {{- range where site.RegularPages "Section" $section }}
+    {{- if eq ($.Date.Format "2006") (.PublishDate.Format "2006") }}
+      {{- $p = $p | append . }}
+    {{- end }}
+  {{- end }}
+
+  {{- $cfg := site.Params.modules.archive }}
+
+  {{- if $cfg.paginate }}
+    {{- $p = (.Paginate $p).Pages }}
+  {{- end }}
+
+  {{- range $p }}
+    {{- partial "archive/list-item.html" . }}
+  {{- end }}
+
+  {{- if $cfg.paginate }}
+    <nav class="pagination archive-pagination">
+      {{- template "_internal/pagination.html" . }}
+    </nav>
+  {{- end }}
+
+  {{ if $cfg.navigation }}
+    <nav class="previous-next archive-previous-next">
+      {{ with .Parent.Sections.Prev . }}
+        <a href="{{ .RelPermalink }}">
+          <button type="button">{{ printf "%s %s" (T "previous") (T "year")}}</button>
+        </a>
+      {{ end }}
+      {{ with .Parent.Sections.Next . }}
+        <a href="{{ .RelPermalink }}">
+          <button type="button">{{ printf "%s %s" (T "next") (T "year")}}</button>
+        </a>
+      {{ end }}
+    </nav>
+  {{ end }}
+{{- end }}

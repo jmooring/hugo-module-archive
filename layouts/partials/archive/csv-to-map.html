@@ -1,0 +1,32 @@
+{{- /*
+Returns a slice of maps from a comma-delimited CSV file in the assets directory.
+
+@returns {object}
+
+@example
+
+    {{ $data := dict }}
+    {{ with resources.Get "pets.csv" }}
+      {{ $data = partial "csv-to-map.html" . }}
+    {{ end }}
+
+*/}}
+
+{{- $data := dict }}
+{{- with resources.Get . }}
+  {{- $data = transform.Unmarshal . }}
+  {{- $headerRow := index $data 0 }}
+  {{- $s := slice }}
+  {{- range $k, $v := $data }}
+    {{- if $k }}
+      {{- $m := dict "row" $k }}
+      {{- range $k, $v := . }}
+        {{- $m = merge $m (dict (index $headerRow $k) $v) }}
+      {{- end }}
+      {{- $s = $s | append $m }}
+    {{- end }}
+  {{- end }}
+  {{- $data = $s }}
+{{- end }}
+
+{{- return $data }}

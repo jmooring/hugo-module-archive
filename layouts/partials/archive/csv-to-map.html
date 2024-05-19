@@ -1,0 +1,44 @@
+{{- /*
+Returns a slice of maps from a CSV file.
+
+The CSV file must have a header row.
+
+@context {string} path The path to the CSV file.
+@context {string} [delimiter=","] The delimiting character between the fields in each row.
+
+@returns {object}
+
+@example {{ $data := partial "csv-to-map.html" (dict "path" "pets.csv") }}
+*/}}
+
+{{- /* Initialize. */}}
+{{- $partialName := "csv-to-map" }}
+
+{{- /* Get context. */}}
+{{- $path := .path }}
+{{- $delimiter := or .delimiter "," }}
+
+{{- /* Validate path. */}}
+{{- if not $path }}
+  {{- errorf "The %q partial requires a path parameter" $partialName }}
+{{- end }}
+
+{{- /* Get resource. */}}
+{{- $data := dict }}
+{{- with resources.Get $path }}
+  {{- $data = transform.Unmarshal (dict "delimiter" $delimiter) . }}
+  {{- $headerRow := index $data 0 }}
+  {{- $s := slice }}
+  {{- range $k, $v := $data }}
+    {{- if $k }}
+      {{- $m := dict "row" $k }}
+      {{- range $k, $v := . }}
+        {{- $m = merge $m (dict (index $headerRow $k) $v) }}
+      {{- end }}
+      {{- $s = $s | append $m }}
+    {{- end }}
+  {{- end }}
+  {{- $data = $s }}
+{{- end }}
+
+{{- return $data }}

@@ -2,6 +2,8 @@
 
 This Hugo module creates year, month, and day archive pages for one section of a site. The module includes shortcodes and partials to render an archive widget or outline.
 
+Requires Hugo v0.126.2 or later.
+
 ## Configuration
 
 To add this module to your project, initialize your project as a Hugo module:

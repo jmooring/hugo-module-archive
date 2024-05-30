@@ -1,5 +1,5 @@
 [module.hugoVersion]
-min = '0.127.0'
+min = '0.126.2'
 
 [params.modules.archive.formats]
 year = "2006"

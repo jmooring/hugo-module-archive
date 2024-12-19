@@ -50,7 +50,6 @@ Run these commands to build your site:
 
 ```text
 mkdir -p assets/data
-hugo mod verify
 hugo list published > assets/data/published-content.csv
 hugo
 ```

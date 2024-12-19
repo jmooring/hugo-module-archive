@@ -2,7 +2,7 @@
 
 This Hugo module creates year, month, and day archive pages for one section of a site. The module includes shortcodes and partials to render an archive widget or outline.
 
-Requires Hugo v0.126.2 or later.
+Requires Hugo v0.140.1 or later.
 
 ## Configuration
 
@@ -89,7 +89,6 @@ To include an archive outline within a template:
 git clone --single-branch -b hugo-github-issue-448 https://github.com/jmooring/hugo-testing hugo-github-issue-448
 cd hugo-github-issue-448
 mkdir -p assets/data
-hugo mod verify
 hugo list published > assets/data/published-content.csv
 hugo server
 ```

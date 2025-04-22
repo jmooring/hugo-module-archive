@@ -35,7 +35,7 @@
 
   {{- if $cfg.paginate }}
     <nav class="pagination archive-pagination">
-      {{- template "_internal/pagination.html" . }}
+      {{- partial "pagination.html" . }}
     </nav>
   {{- end }}
 {{- end }}

@@ -21,10 +21,11 @@ Then add this to your site configuration:
 path = 'github.com/jmooring/hugo-module-archive'
 
 [params.modules.archive]
-section = '/posts/'   # The section for which to build archive pages.
-prefix = '/archive/'  # The URL prefix for archive pages.
-paginate = true       # Whether to paginate archive pages.
+enableDaily = true    # Whether to enable daily archive pages.
 navigation = false    # Whether to display previous and next buttons on archive pages.
+paginate = true       # Whether to paginate archive pages.
+prefix = '/archive/'  # The URL prefix for archive pages.
+section = '/posts/'   # The section for which to build archive pages.
 
 [params.modules.archive.formats]
 year = "2006"

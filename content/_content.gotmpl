@@ -54,16 +54,18 @@
   {{ end }}
 
   {{/* Create archive pages: year/month/day. */}}
-  {{ range $yearMonthDayDates }}
-    {{ $page := dict
-      "dates" (dict "date" .)
-      "kind" "section"
-      "layout" "day"
-      "path" (printf "%s/%s" $cfg.prefix (.Format "2006/01/02") | strings.TrimLeft "/")
-      "title" (printf "%s %s" (T "archive_title_day") (. | time.Format $cfg.formats.day))
-      "type" "archive"
-    }}
-    {{ $.AddPage $page }}
+  {{ if $cfg.enabledaily }}
+    {{ range $yearMonthDayDates }}
+      {{ $page := dict
+        "dates" (dict "date" .)
+        "kind" "section"
+        "layout" "day"
+        "path" (printf "%s/%s" $cfg.prefix (.Format "2006/01/02") | strings.TrimLeft "/")
+        "title" (printf "%s %s" (T "archive_title_day") (. | time.Format $cfg.formats.day))
+        "type" "archive"
+      }}
+      {{ $.AddPage $page }}
+    {{ end }}
   {{ end }}
 
 {{ end }}

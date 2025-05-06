@@ -24,18 +24,24 @@
                 <li>
                   <a href="{{ $href }}">{{ .Key }}</a>
                   <ol>
-                    {{- range .GroupByPublishDate $cfg.formats.day }}
-                      {{- with index .Pages 0 }}
-                        {{- $href = printf "%s/%04d/%02d/%02d" $cfg.prefix .PublishDate.Year .PublishDate.Month .PublishDate.Day }}
+                    {{- if $cfg.enabledaily }}
+                      {{- range .GroupByPublishDate $cfg.formats.day }}
+                        {{- with index .Pages 0 }}
+                          {{- $href = printf "%s/%04d/%02d/%02d" $cfg.prefix .PublishDate.Year .PublishDate.Month .PublishDate.Day }}
+                        {{- end }}
+                        <li>
+                          <a href="{{ $href }}">{{ .Key }}</a>
+                          <ol>
+                            {{- range .Pages.ByPublishDate.Reverse }}
+                              <li><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>
+                            {{- end }}
+                          </ol>
+                        </li>
                       {{- end }}
-                      <li>
-                        <a href="{{ $href }}">{{ .Key }}</a>
-                        <ol>
-                          {{- range .Pages.ByPublishDate.Reverse }}
-                            <li><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>
-                          {{- end }}
-                        </ol>
-                      </li>
+                    {{- else }}
+                      {{- range .Pages.ByPublishDate.Reverse }}
+                        <li><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>
+                      {{- end }}
                     {{- end }}
                   </ol>
                 </li>

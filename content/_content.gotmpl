@@ -1,7 +1,8 @@
 {{ with resources.Get "data/published-content.csv" }}
 
   {{/* Transform CSV file to map. */}}
-  {{ $data := partial "archive/csv-to-map.html" . }}
+  {{ $opts := dict "targetType" "map" }}
+  {{ $data := transform.Unmarshal $opts . }}
 
   {{/* Get module configuration. */}}
   {{ $cfg := site.Params.modules.archive }}

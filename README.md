@@ -2,7 +2,7 @@
 
 This Hugo module creates year, month, and day archive pages for one section of a site. The module includes shortcodes and partials to render an archive widget or outline.
 
-Requires Hugo v0.146.7 or later.
+Requires Hugo v0.148.0 or later.
 
 ## Configuration
 
@@ -44,6 +44,17 @@ archive_title_year = 'Yearly archive for'
 archive_title_month = 'Monthly archive for'
 archive_title_day = 'Daily archive for'
 ```
+
+To prevent generation of RSS feeds for archive pages, add this to your site configuration:
+
+```toml
+[[cascade]]
+outputs = ['html']
+[cascade.target]
+path = '{/archive,/archive/**}'
+```
+
+The above assumes that you have set `prefix` to `archive`.
 
 ## Usage
 
